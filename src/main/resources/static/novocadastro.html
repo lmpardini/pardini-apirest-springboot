@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+	<title>Novo Cadastro</title>
+</head>
+
+<body  style="background-color: #f1f1f1;">
+
+	<div class="container">
+
+		<h1>Usuários <small class="h4 text-secondary">novo cadastro</small></h1>
+
+		<form action="" id="cadastro">
+
+			<div class="mb-3">
+				<label for="exampleFormControlInput1" class="form-label" hidden>Id</label>
+				<input type="text" class="form-control" id="id" readonly="readonly" hidden>
+			</div>
+			<div class="mb-3">
+				<label for="exampleFormControlInput1" class="form-label">Nome:</label> <input type="text"
+					class="form-control" id="nome" placeholder="Digite seu nome" required>
+			</div>
+			<div class="mb-3">
+				<label for="exampleFormControlInput1" class="form-label">Email:</label> <input type="email"
+					class="form-control" id="email" placeholder="name@example.com" required>
+			</div>
+
+			<div class="col-auto">
+				<button type="submit" class="btn btn-success mb-3" onclick="salvarUsuario()">Salvar</button>
+				<a href="index.html" class="btn btn-success mb-3">Voltar</a>
+			</div>
+
+		</form>
+
+	</div>
+	
+
+	
+<footer class="text-center text-white fixed-bottom">
+
+ 
+  <div class="text-center text-dark p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+    Codigo-Fonte no   <a class="text-dark" href="https://github.com/lmpardini/pardini-apirest-springboot">GitHub</a>  - Criado Por:
+    <a class="text-dark" href="https://www.linkedin.com/in/lmpardini/">Lucas Pardini</a>
+    
+  </div> 
+</footer>
+
+
+
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+		integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+		crossorigin="anonymous"></script>
+
+	<script type="text/javascript">
+
+
+
+		function salvarUsuario() {
+
+			var id = $("#id").val();
+			var nome = $("#nome").val();
+			var email = $("#email").val();
+
+			if (nome != null && nome != '' && email != null && email != '') {
+
+				$.ajax({
+					method: "POST",
+					url: "adicionar",
+					data: JSON.stringify({ id: id, nome: nome, email: email }),
+					contentType: "application/json; charset=utf-8",
+					success: function (response) {
+
+						$("#id").val(response.id);
+						alert("Usuário criado com sucesso");
+
+						window.location.href = "index.html";
+					}
+				}).fail(function (xhr, status, errorThrown) {
+					alert("Erro ao salvar usuário" + xhr.responseText);
+				});
+
+			}
+		}
+
+
+	</script>
+
+</body>
+
+</html>
