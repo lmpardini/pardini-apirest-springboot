@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"	integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+	crossorigin="anonymous">
+
+<title>Cadastro</title>
+</head>
+<body>
+	<div class="container">
+	
+		<h1>Cadastro de Usuários</h1>
+
+		<form action="" id="cadastro">
+
+			<div class="mb-3">
+				<label for="exampleFormControlInput1" class="form-label">Id</label>
+				<input type="text" class="form-control" id="id" readonly="readonly">
+			</div>
+			<div class="mb-3">
+				<label for="exampleFormControlInput1" class="form-label">Nome:</label> <input type="text" class="form-control" id="nome" placeholder="Digite seu nome" required>
+			</div>
+			<div class="mb-3">
+				<label for="exampleFormControlInput1" class="form-label">Email:</label> <input type="email" class="form-control" id="email"	placeholder="name@example.com" required>
+			</div>
+
+			<div class="col-auto">
+				<button type="submit" class="btn btn-primary mb-3"
+					onclick="salvarUsuario()">Enviar</button>
+				<button type="button" class="btn btn-secondary mb-3"
+					onclick="document.getElementById('cadastro').reset();">Novo</button>
+
+				<button type="button" class="btn btn-success mb-3"data-bs-toggle="modal" data-bs-target="#pesquisaUsuario" onclick="limparConteudoTabela()">Pesquisar</button>
+				
+			</div>
+
+		</form>
+
+
+		<div class="modal fade" id="pesquisaUsuario" tabindex="-1"
+			aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLabel">Pesquisa
+							usuário</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"
+							aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<form>
+							<div class="mb-3">
+								<label for="nome-busca" class="col-form-label">Informe o
+									nome:</label> <input type="text" class="form-control" id="nome-busca">
+							</div>
+							
+							<div class="row">
+								  <div class="col-sm-4">
+								  		<button type="button" class="btn btn-warning" style="margin:5px" onclick="pesquisaTodosUser()">Ver Todos</button>
+								  </div>
+								  <div class="col-sm-5"></div>
+								  <div class="col-sm-1">
+								  		<button type="button" class="btn btn-primary " style="margin:5px" onclick="pesquisaUser()">Pesquisar</button>								  
+								  </div>
+								  
+							</div>
+														
+						</form>
+
+						<table id="tabelaResultados" class="table table-striped">
+							<thead>
+								
+							</thead>
+							<tbody>
+
+
+							</tbody>
+						</table>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary"	data-bs-dismiss="modal" onclick="limparConteudoTabela()">Fechar</button>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	
+
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+		integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+		crossorigin="anonymous"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+		crossorigin="anonymous"></script>
+
+	<script type="text/javascript">
+	
+		function limparConteudoTabela(){
+			
+			$('#tabelaResultados > thead > tr').remove();							
+			$('#tabelaResultados > tbody > tr').remove();	
+			
+		}
+	
+		function pesquisaUser(){			
+			
+			var nome = $("#nome-busca").val();			
+			
+			if(nome != null && nome.trim() != ""){
+				
+				$.ajax({
+					method: "GET", 
+					url: "buscarusernome", 
+					data: "name="+ nome, 					
+					
+					success: function(response){	
+						
+						$('#tabelaResultados > thead > tr').remove();							
+						$('#tabelaResultados > tbody > tr').remove();	
+						
+						$('#tabelaResultados > thead').append('<tr><th scope="col">ID</th><th scope="col">Nome</th><th scope="col">Editar</th><th scope="col">Excluir</th></tr>');		
+						
+						for(var i = 0; i < response.length; i++){	
+							
+							$('#tabelaResultados > tbody').append('<tr id='+response[i].id+'><td>'+response[i].id+'</td><td>'+response[i].name+'</td><td><button type="button" class="btn btn-warning btn-sm" onclick="colocarEmEdicao('+response[i].id+')">Editar</button></td><td><button type="button" class="btn btn-danger btn-sm" onclick="excluirUsuario('+response[i].id+')">Excluir</button></td> </tr>'); 
+							
+						}	
+						
+					}				
+				}).fail(function (xhr, status, errorThrown){
+					alert("Erro ao buscar usuário" + xhr.responseText);
+				});
+			}else{
+				alert("Digite um nome para pesquisa");
+			}
+		}	
+		
+		function pesquisaTodosUser(){					
+					
+					$.ajax({
+						method: "GET", 
+						url: "listartodos", 
+								
+						
+						success: function(response){	
+							
+							$('#tabelaResultados > thead > tr').remove();							
+							$('#tabelaResultados > tbody > tr').remove();	
+							
+							$('#tabelaResultados > thead').append('<tr><th scope="col">ID</th><th scope="col">Nome</th><th scope="col">Editar</th><th scope="col">Excluir</th></tr>');		
+							
+							for(var i = 0; i < response.length; i++){	
+								
+								$('#tabelaResultados > tbody').append('<tr id='+response[i].id+'><td>'+response[i].id+'</td><td>'+response[i].name+'</td><td><button type="button" class="btn btn-warning btn-sm" onclick="colocarEmEdicao('+response[i].id+')">Editar</button></td><td><button type="button" class="btn btn-danger btn-sm" onclick="excluirUsuario('+response[i].id+')">Excluir</button></td> </tr>'); 
+								
+							}	
+							
+						}				
+					}).fail(function (xhr, status, errorThrown){
+						alert("Erro ao buscar usuário" + xhr.responseText);
+					});
+				
+			}	
+		
+		function colocarEmEdicao(id){
+			
+			$.ajax({
+				method: "GET", 
+				url: "buscaruserid", 
+				data: "iduser="+ id, 					
+				
+				success: function(response){	
+					
+					$("#id").val(response.id);
+					$("#nome").val(response.name);
+					$("#email").val(response.email);
+					
+					$('#tabelaResultados > tbody > tr').remove();
+					
+					$('#pesquisaUsuario').modal('hide');
+					
+				}				
+			}).fail(function (xhr, status, errorThrown){
+				alert("Erro ao buscar usuário" + xhr.responseText);
+			});
+			
+		}
+		
+function excluirUsuario(id){
+	
+		if(confirm('Deseja realmente excluir o usuário?')){
+			
+			$.ajax({
+				method: "DELETE", 
+				url: "delete", 
+				data: "iduser="+ id, 					
+				
+				success: function(response){	
+					
+					$('#'+id).remove();				
+					
+					alert(response);					
+					
+					
+					
+				}				
+			}).fail(function (xhr, status, errorThrown){
+				alert("Erro ao buscar usuário" + xhr.responseText);
+			});
+			
+		}
+		
+}	
+	
+		function salvarUsuario(){
+			
+			var id = $("#id").val();
+			var nome = $("#nome").val();
+			var email = $("#email").val();	
+			
+			if(nome != null && nome != '' && email != null && email != ''){
+				
+			$.ajax({
+				method: "POST", 
+				url: "adicionar", 
+				data: JSON.stringify({id: id, nome: nome, email: email }), 
+				contentType: "application/json; charset=utf-8", 
+				success: function(response){
+					
+					$("#id").val(response.id);
+					alert("Usuário criado com sucesso");
+				}				
+			}).fail(function (xhr, status, errorThrown){
+				alert("Erro ao salvar usuário" + xhr.responseText);
+			});		
+			
+		}
+		}
+		
+	
+	</script>
+
+</body>
+</html>
